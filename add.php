@@ -1,5 +1,4 @@
 <?php
-
 include_once('lib.php');
 
 $contacts = getAllContactWithoutLeads(true);

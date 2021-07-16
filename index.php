@@ -1,17 +1,22 @@
 <?php
 include_once('lib.php');
+$configs = include_once('config.php');
+$code = isset($_GET['code']) ? $_GET['code'] : null;
+$params = array(
+    'client_id' => $configs['CLIENT_ID'],
+    'client_secret' => $configs['CLIENT_SECRET'],
+    'grant_type' => $configs['GRANT_TYPE'],
+    'code' => $code,
+    'redirect_uri' => $configs['REDIRECT_URI']
+);
 
-if (!is_auth()) {
+$oauthResponse = apiCall('POST', $configs['API_URL'] . '/oauth2/access_token', $params);
 
-    $code = isset($_GET['code']) ? $_GET['code'] : null;
-
-    if ($code) {
-        auth($code);
-    }
+if (isset($oauthResponse->access_token)) {
+    setcookie("access_token", $oauthResponse->access_token);
 }
 
 ?>
-
 <html>
 
 <head>
@@ -36,7 +41,7 @@ if (!is_auth()) {
 
     <?php else : ?>
         <h1>Для просмотра необходима авторизация</h1>
-        <script class="amocrm_oauth" charset="utf-8" data-client-id="3894b092-bee0-493e-96f9-3bf53f614b6d" data-title="Button" data-compact="false" data-class-name="className" data-color="default" data-state="state" data-error-callback="functionName" data-mode="post_message" src="https://www.amocrm.ru/auth/button.min.js"></script>
+        <script class="amocrm_oauth" charset="utf-8" data-client-id="3894b092-bee0-493e-96f9-3bf53f614b6d" data-title="Button" data-compact="false" data-class-name="className" data-color="default" data-state="state" data-error-callback="functionName" data-mode="popup" src="https://www.amocrm.ru/auth/button.min.js"></script>
     <?php endif; ?>
 </body>
 

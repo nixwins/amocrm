@@ -1,6 +1,4 @@
 <?php
-
-
 function apiCall($method, $url, $params, $headers = null)
 {
     $ch = curl_init();
@@ -8,7 +6,7 @@ function apiCall($method, $url, $params, $headers = null)
     switch ($method) {
         case 'POST':
             curl_setopt($ch, CURLOPT_POST, false);
-            if ($params)   curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+            if ($params)   curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
             break;
     }
 
@@ -35,9 +33,7 @@ function auth($code)
         'code' => $code,
         'redirect_uri' => $configs['REDIRECT_URI']
     );
-    $oauthResponse = apiCall('POST', $configs['API_URL'] . '/oauth2/access_token', $params);
-
-    setcookie("access_token", $oauthResponse->access_token);
+    return apiCall('POST', $configs['API_URL'] . '/oauth2/access_token', $params);
 }
 function is_auth()
 {
@@ -98,7 +94,7 @@ function createTaskWithContacts($contacts, $taskText, $complete_till)
     $addTasksResponse = null;
 
     if ($access_token) {
-        $addTasksResponse = apiCall('POST',  'https://halaulilau.amocrm.ru/api/v4/tasks', $params, $headers);
+        $addTasksResponse = apiCall('POST',  'https://halaulilau.amocrm.ru/api/v4/tasks', json_encode($params), $headers);
     }
 
     return $addTasksResponse;
